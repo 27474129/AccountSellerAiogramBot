@@ -6,5 +6,5 @@ dp = ld.get_dispatcher()
 
 @dp.errors_handler()
 async def errors_handler(update, exception):
-    print("error")
+    print(exception)
     return True
