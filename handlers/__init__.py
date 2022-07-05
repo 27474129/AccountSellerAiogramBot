@@ -1,3 +1,2 @@
-from .initial import dp
-from .errors import dp
-from .steam import dp
+from .core import dp
+from .dota2 import dp

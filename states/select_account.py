@@ -12,3 +12,6 @@ class SelectAccount(StatesGroup):
     gta5 = State()
     # end games
     select_price = State()
+
+    confirm_filter = State()
+
