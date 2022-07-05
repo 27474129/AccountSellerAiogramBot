@@ -1,5 +1,4 @@
 /.idea
-/__pycache__
-/handlers/__pycache__
+**/__pycache__
 /config.py
 /TT.txt

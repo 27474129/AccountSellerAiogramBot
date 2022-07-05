@@ -10,10 +10,8 @@ class Loader:
     __dp = Dispatcher(__bot, storage=__storage, loop=asyncio.get_event_loop())
 
 
-
     def get_dispatcher(self):
         return self.__dp
-
 
     def get_bot(self):
         return self.__bot
