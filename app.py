@@ -2,6 +2,7 @@ if __name__ == "__main__":
     from aiogram import executor
     from config import Config
     from loader import Loader
+    import filters, handlers
     from handlers import dp
 
 

@@ -2,16 +2,16 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 
 class SelectAccount(StatesGroup):
-    choice_of_company_name = State()
-
-    steam_company_games = State()
-
+    set_price = State()
+    confirm_price = State()
+    steam_games = State()
     # games
-    dota2 = State()
+    dota = State()
+    select_rating = State()
+    set_rating = State()
     csgo = State()
     gta5 = State()
     # end games
-    select_price = State()
 
     confirm_filter = State()
 
