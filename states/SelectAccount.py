@@ -7,11 +7,13 @@ class SelectAccount(StatesGroup):
     steam_games = State()
     # games
     dota = State()
-    select_rating = State()
-    set_rating = State()
+    set_dota_rating = State()
+    set_dota_account_lvl = State()
+    set_dota_hours = State()
+    set_dota_decency = State()
+
     csgo = State()
     gta5 = State()
     # end games
 
     confirm_filter = State()
-

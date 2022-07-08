@@ -1,2 +1,2 @@
 from .core import dp
-from .dota2 import dp
+from .dota import dp
