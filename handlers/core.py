@@ -4,7 +4,7 @@ from loader import Loader
 from keyboards.inline.ClientInline import ClientInline
 from states.SelectAccount import SelectAccount
 from aiogram.dispatcher import FSMContext
-from keyboards.default.client_default import SteamClientDefault
+from keyboards.default.ClientDefault import SteamClientDefault
 from aiogram.dispatcher import filters
 from filters.price import PriceFilter
 
