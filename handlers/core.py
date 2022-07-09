@@ -1,7 +1,8 @@
 from aiogram import types
 from text import *
 from loader import Loader
-from keyboards.inline.ClientInline import ClientInline
+from keyboards.inline.DotaClientInline import DotaClientInline
+from keyboards.inline.CoreClientInline import CoreClientInline
 from states.SelectAccount import SelectAccount
 from aiogram.dispatcher import FSMContext
 from keyboards.default.ClientDefault import SteamClientDefault
@@ -13,7 +14,8 @@ import functions
 
 
 ld = Loader()
-cl_inline = ClientInline()
+dota_inline = DotaClientInline()
+core_inline = CoreClientInline()
 cl_default = SteamClientDefault()
 dp = ld.get_dispatcher()
 
@@ -21,13 +23,13 @@ dp = ld.get_dispatcher()
 
 @dp.message_handler(commands=["start", "help"])
 async def initial_handler(message : types.Message):
-    initial_keyboard = cl_inline.get_initial_keyboard()
+    initial_keyboard = core_inline.get_initial_keyboard()
     await message.answer(f"Привет, {message.from_user.username}, {commands[ 'start' ]}", reply_markup=initial_keyboard)
 
 
 @dp.callback_query_handler(text="start")
 async def select_price(callback : types.CallbackQuery, state : FSMContext):
-    prices_keyboard = cl_inline.get_prices_keyboard()
+    prices_keyboard = core_inline.get_prices_keyboard()
 
     await callback.message.answer(text=f"{states[ 'select_price' ]}", reply_markup=prices_keyboard)
     await SelectAccount.set_price.set()
@@ -51,12 +53,12 @@ async def set_price(callback : types.CallbackQuery, state : FSMContext):
 @dp.message_handler(filters.Text(equals="Назад"), state=SelectAccount.confirm_price)
 async def confirm_price(message : types.Message, state : FSMContext):
     if (message.text == "Подтвердить фильтр"):
-        steam_games_keyboard = cl_inline.get_steam_games_keyboard()
+        steam_games_keyboard = core_inline.get_steam_games_keyboard()
         await message.answer("Фильтр успешно установлен")
         await message.answer(f"{states['steam_games']}", reply_markup=steam_games_keyboard)
         await state.set_state(SelectAccount.steam_games)
     else:
-        prices_keyboard = cl_inline.get_prices_keyboard()
+        prices_keyboard = core_inline.get_prices_keyboard()
         await message.answer(text=f"{states[ 'select_price' ]}", reply_markup=prices_keyboard)
         await state.set_state(SelectAccount.set_price)
 
@@ -64,7 +66,7 @@ async def confirm_price(message : types.Message, state : FSMContext):
             del data[ "price" ]
 
 
-
+@dp.callback_query_handler(text="gta", state=SelectAccount.steam_games)
 @dp.callback_query_handler(text="csgo", state=SelectAccount.steam_games)
 @dp.callback_query_handler(text="dota", state=SelectAccount.steam_games)
 async def games(callback : types.CallbackQuery, state : FSMContext):
@@ -114,24 +116,31 @@ async def confirm_filter(message : types.Message, state : FSMContext):
 async def change_state(callback : types.CallbackQuery, state : FSMContext):
 
     current_state = await state.get_state()
-    games = ["gta5", "dota", "csgo"]
+    games = ["gta", "dota", "csgo"]
 
     for game in games:
         if (current_state == f"SelectAccount:{game}"):
             await state.set_state(SelectAccount.steam_games)
-            steam_games_keyboard = cl_inline.get_steam_games_keyboard()
+            steam_games_keyboard = core_inline.get_steam_games_keyboard()
             await callback.message.answer(f"{states[ 'steam_games' ]}", reply_markup=steam_games_keyboard)
 
     if (current_state == "SelectAccount:steam_games"):
         await state.set_state(SelectAccount.set_price)
-        prices_keyboard = cl_inline.get_prices_keyboard()
+        prices_keyboard = core_inline.get_prices_keyboard()
         await callback.message.answer(f"{states[ 'select_price' ]}", reply_markup=prices_keyboard)
 
     if (
             current_state == "SelectAccount:set_dota_rating" or
             current_state == "SelectAccount:set_dota_account_lvl" or
             current_state == "SelectAccount:set_dota_hours" or
-            current_state == "SelectAccount:set_dota_decency"
+            current_state == "SelectAccount:set_dota_decency" or
+            current_state == "SelectAccount:set_csgo_hours" or
+            current_state == "SelectAccount:set_csgo_prime" or
+            current_state == "SelectAccount:set_csgo_faceit" or
+            current_state == "SelectAccount:set_csgo_rank" or
+            current_state == "SelectAccount:set_gta_balance" or
+            current_state == "SelectAccount:set_gta_char_lvl" or
+            current_state == "SelectAccount:set_gta_edition"
     ):
         await functions.set_select_state(state)
         async with state.proxy() as data:
@@ -141,5 +150,10 @@ async def change_state(callback : types.CallbackQuery, state : FSMContext):
             del data["current_operation"]
 
         game_keyboard = functions.get_keyboard_by_game(current_game, data["filtered"])
-        await callback.message.answer(f"{states[ 'dota' ]}", reply_markup=game_keyboard)
+        if (current_game == "dota"):
+            await callback.message.answer(f"{states[ 'dota' ]}", reply_markup=game_keyboard)
+        if (current_game == "csgo"):
+            await callback.message.answer((f"{states[ 'csgo' ]}"), reply_markup=game_keyboard)
+        if (current_game == "gta"):
+            await callback.message.answer((f"{states[ 'gta' ]}"), reply_markup=game_keyboard)
 

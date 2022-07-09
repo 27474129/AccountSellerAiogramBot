@@ -1,2 +1,2 @@
 from .core import dp
-from .dota import dp
+from .games import dp

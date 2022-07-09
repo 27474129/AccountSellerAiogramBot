@@ -1,5 +1,6 @@
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram import types
+import functions
 
 
 class MainMiddleware(BaseMiddleware):
